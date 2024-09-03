@@ -38,7 +38,7 @@ Ensure you have Python 3.6 or higher installed to use the latest features of the
 Here's a quick example to get you started with the **wooklib** library:
 
 ```python
-from discord_webhook_client import wooklib
+from wokklib import wooklib
 
 # Initialize the webhook
 webhook = wooklib(url="https://discord.com/api/webhooks/your_webhook_id")
@@ -164,7 +164,7 @@ The library includes advanced features such as exponential backoff, cache manage
 
 ```python
 import asyncio
-from discord_webhook_client import Asyncwooklib
+from wooklib import Asyncwooklib
 
 async def main():
     webhook = Asyncwooklib(url="https://discord.com/api/webhooks/your_webhook_id")
