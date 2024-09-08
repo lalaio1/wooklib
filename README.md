@@ -38,10 +38,10 @@ Ensure you have Python 3.6 or higher installed to use the latest features of the
 Here's a quick example to get you started with the **wooklib** library:
 
 ```python
-from wokklib import wooklib
+from wooklib import DiscordWebhook
 
 # Initialize the webhook
-webhook = wooklib(url="https://discord.com/api/webhooks/your_webhook_id")
+webhook = DiscordWebhook(url="https://discord.com/api/webhooks/your_webhook_id")
 
 # Send a simple message
 webhook.send_message("Hello, Discord!")
@@ -53,9 +53,9 @@ This will send a message saying "Hello, Discord!" to the specified Discord chann
 
 ## 📚 Class Overview
 
-### wooklib
+### DiscordWebhook
 
-- **`wooklib(url, username=None, avatar_url=None, log_errors=False, timeout=None, proxies=None, user_agent=None, verbose=False)`**
+- **`DiscordWebhook(url, username=None, avatar_url=None, log_errors=False, timeout=None, proxies=None, user_agent=None, verbose=False)`**
   - The main class for interacting with Discord webhooks.
   - **Parameters**:
     - `url`: The Discord webhook URL.
@@ -67,25 +67,65 @@ This will send a message saying "Hello, Discord!" to the specified Discord chann
     - `user_agent`: Custom user agent for requests.
     - `verbose`: If `True`, detailed logs will be shown.
 
-### Asyncwooklib
+### AsyncDiscordWebhook
 
-- **`Asyncwooklib(url, username=None, avatar_url=None, user_agent=None, timeout=None)`**
-  - An asynchronous version of the `wooklib` class, using `aiohttp` for non-blocking requests.
+- **`AsyncDiscordWebhook(url, username=None, avatar_url=None, user_agent=None, timeout=None)`**
+  - An asynchronous version of the `DiscordWebhook` class, using `aiohttp` for non-blocking requests.
 
-### Mentioningwooklib
+### MentioningDiscordWebhook
 
-- **`Mentioningwooklib(url, username=None, avatar_url=None, log_errors=False, timeout=None, proxies=None, user_agent=None, verbose=False)`**
-  - A subclass of `wooklib` that allows you to easily mention users or roles.
+- **`MentioningDiscordWebhook(url, username=None, avatar_url=None, log_errors=False, timeout=None, proxies=None, user_agent=None, verbose=False)`**
+  - A subclass of `DiscordWebhook` that allows you to easily mention users or roles.
 
-### Validatingwooklib
+### ValidatingDiscordWebhook
 
-- **`Validatingwooklib(url, username=None, avatar_url=None, log_errors=False, timeout=None, proxies=None, user_agent=None, verbose=False)`**
-  - A subclass of `wooklib` that includes validation for message content lengths.
+- **`ValidatingDiscordWebhook(url, username=None, avatar_url=None, log_errors=False, timeout=None, proxies=None, user_agent=None, verbose=False)`**
+  - A subclass of `DiscordWebhook` that includes validation for message content lengths.
 
-### Cachedwooklib
+### CachedDiscordWebhook
 
-- **`Cachedwooklib(url, username=None, avatar_url=None, timeout=None, max_cache_size=128, cache_ttl=300)`**
+- **`CachedDiscordWebhook(url, username=None, avatar_url=None, timeout=None, max_cache_size=128, cache_ttl=300)`**
   - A subclass that caches messages to avoid duplicate sends within a specified time period.
+
+### ExponentialBackoffDiscordWebhook
+
+- **`ExponentialBackoffDiscordWebhook(url, username=None, avatar_url=None, timeout=None)`**
+  - A subclass that handles rate limiting with exponential backoff.
+
+### VerboseDiscordWebhook
+
+- **`VerboseDiscordWebhook(url, username=None, avatar_url=None, log_errors=False, timeout=None, proxies=None, user_agent=None, verbose=True)`**
+  - A subclass of `DiscordWebhook` that provides verbose logging for debugging.
+
+### PrivateWebhook
+
+- **`PrivateWebhook(url, username=None, avatar_url=None)`**
+  - A class for handling private or internal webhooks with additional security features.
+
+### WebhookException
+
+- **`WebhookException`**
+  - Base class for all exceptions related to webhooks.
+
+### WebhookNotFoundError
+
+- **`WebhookNotFoundError`**
+  - Raised when a webhook is not found.
+
+### RateLimitExceededError
+
+- **`RateLimitExceededError`**
+  - Raised when the rate limit for a webhook is exceeded.
+
+### InvalidWebhookURLError
+
+- **`InvalidWebhookURLError`**
+  - Raised when the webhook URL is invalid.
+
+### WebhookResponseHandler
+
+- **`WebhookResponseHandler`**
+  - Handles responses from the webhook requests.
 
 ---
 
@@ -96,7 +136,7 @@ This will send a message saying "Hello, Discord!" to the specified Discord chann
 Sending a message with **wooklib** is straightforward:
 
 ```python
-webhook = wooklib(url="https://discord.com/api/webhooks/your_webhook_id")
+webhook = DiscordWebhook(url="https://discord.com/api/webhooks/your_webhook_id")
 webhook.send_message("This is a test message!")
 ```
 
@@ -146,9 +186,11 @@ Custom error classes are provided to handle different types of webhook-related e
 Example:
 
 ```python
+from wooklib import WebhookNotFoundError
+
 try:
     webhook.send_message("This is a test message!")
-except InvalidWebhookURLError as e:
+except WebhookNotFoundError as e:
     print(f"Error: {e}")
 ```
 
@@ -164,10 +206,10 @@ The library includes advanced features such as exponential backoff, cache manage
 
 ```python
 import asyncio
-from wooklib import Asyncwooklib
+from wooklib import AsyncDiscordWebhook
 
 async def main():
-    webhook = Asyncwooklib(url="https://discord.com/api/webhooks/your_webhook_id")
+    webhook = AsyncDiscordWebhook(url="https://discord.com/api/webhooks/your_webhook_id")
     messages = ["Message 1", "Message 2", "Message 3"]
     await webhook.send_messages_batch(messages)
 
@@ -177,7 +219,9 @@ asyncio.run(main())
 ### Example 2: Sending a Mention with a Role ID
 
 ```python
-webhook = Mentioningwooklib(url="https://discord.com/api/webhooks/your_webhook_id")
+from wooklib import MentioningDiscordWebhook
+
+webhook = MentioningDiscordWebhook(url="https://discord.com/api/webhooks/your_webhook_id")
 webhook.send_mention("Attention everyone!", role_id="123456789012345678")
 ```
 
@@ -190,7 +234,7 @@ webhook.send_mention("Attention everyone!", role_id="123456789012345678")
 If you need to use a proxy:
 
 ```python
-webhook = wooklib(url="https://discord.com/api/webhooks/your_webhook_id")
+webhook = DiscordWebhook(url="https://discord.com/api/webhooks/your_webhook_id")
 webhook.set_proxy("http://yourproxy.com:8080")
 webhook.send_message("Message sent through a proxy!")
 ```
@@ -206,10 +250,10 @@ webhook.send_message("Message with custom headers!")
 
 ### Rate Limiting with Exponential Backoff
 
-The `ExponentialBackoffwooklib` class automatically handles rate limiting with exponential backoff:
+The `ExponentialBackoffDiscordWebhook` class automatically handles rate limiting with exponential backoff:
 
 ```python
-webhook = ExponentialBackoffwooklib(url="https://discord.com/api/webhooks/your_webhook_id")
+webhook = ExponentialBackoffDiscordWebhook(url="https://discord.com/api/webhooks/your_webhook_id")
 webhook.send_message("Message with rate limit handling!")
 ```
 
@@ -218,7 +262,7 @@ webhook.send_message("Message with rate limit handling!")
 ## 💡 Tips and Best Practices
 
 - **Handle Errors Gracefully:** Always handle exceptions to avoid crashing your application.
-- **Use Asynchronous Methods for High Volume:** For high-frequency message sending, consider using the `Asyncwooklib` class to avoid blocking your application.
+- **Use Asynchronous Methods for High Volume:** For high-frequency message sending, consider using the `AsyncDiscordWebhook` class to avoid blocking your application.
 - **Respect Discord's Rate Limits:** Avoid sending too many requests too quickly to prevent being rate limited.
 
 ---
@@ -233,10 +277,12 @@ webhook.send_message("Message with rate limit handling!")
 ### Version 1.1.0
 
 - Added support for sending rich embeds and files.
-- Introduced the `Cachedwooklib` class for caching messages.
+- Introduced the `CachedDiscordWebhook` class for caching messages.
 
 ---
 
 ## 📄 License
 
-The **wooklib** library is licensed under the MIT License. See the `LICENSE` file for more information.
+The **wooklib
+
+** library is licensed under the MIT License. See the `LICENSE` file for more information.
